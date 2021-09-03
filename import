@@ -1,0 +1,1433 @@
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": 108,
+   "id": "953ff6bc",
+   "metadata": {
+    "scrolled": true
+   },
+   "outputs": [],
+   "source": [
+    "import pandas as pd\n",
+    "import numpy as np\n",
+    "import matplotlib as plt"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 109,
+   "id": "21679bc9",
+   "metadata": {
+    "scrolled": true
+   },
+   "outputs": [],
+   "source": [
+    "#import dataset\n",
+    "dataset = pd.read_csv('/Users/supanitsukgree/Downloads/netflix_titles.csv')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 110,
+   "id": "76ecd08d",
+   "metadata": {
+    "scrolled": true
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "(7787, 12)\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(dataset.shape)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 111,
+   "id": "8ff1ecaf",
+   "metadata": {
+    "scrolled": true
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>show_id</th>\n",
+       "      <th>type</th>\n",
+       "      <th>title</th>\n",
+       "      <th>director</th>\n",
+       "      <th>cast</th>\n",
+       "      <th>country</th>\n",
+       "      <th>date_added</th>\n",
+       "      <th>release_year</th>\n",
+       "      <th>rating</th>\n",
+       "      <th>duration</th>\n",
+       "      <th>listed_in</th>\n",
+       "      <th>description</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>s1</td>\n",
+       "      <td>TV Show</td>\n",
+       "      <td>3%</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>João Miguel, Bianca Comparato, Michel Gomes, R...</td>\n",
+       "      <td>Brazil</td>\n",
+       "      <td>August 14, 2020</td>\n",
+       "      <td>2020</td>\n",
+       "      <td>TV-MA</td>\n",
+       "      <td>4 Seasons</td>\n",
+       "      <td>International TV Shows, TV Dramas, TV Sci-Fi &amp;...</td>\n",
+       "      <td>In a future where the elite inhabit an island ...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>s2</td>\n",
+       "      <td>Movie</td>\n",
+       "      <td>7:19</td>\n",
+       "      <td>Jorge Michel Grau</td>\n",
+       "      <td>Demián Bichir, Héctor Bonilla, Oscar Serrano, ...</td>\n",
+       "      <td>Mexico</td>\n",
+       "      <td>December 23, 2016</td>\n",
+       "      <td>2016</td>\n",
+       "      <td>TV-MA</td>\n",
+       "      <td>93 min</td>\n",
+       "      <td>Dramas, International Movies</td>\n",
+       "      <td>After a devastating earthquake hits Mexico Cit...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>s3</td>\n",
+       "      <td>Movie</td>\n",
+       "      <td>23:59</td>\n",
+       "      <td>Gilbert Chan</td>\n",
+       "      <td>Tedd Chan, Stella Chung, Henley Hii, Lawrence ...</td>\n",
+       "      <td>Singapore</td>\n",
+       "      <td>December 20, 2018</td>\n",
+       "      <td>2011</td>\n",
+       "      <td>R</td>\n",
+       "      <td>78 min</td>\n",
+       "      <td>Horror Movies, International Movies</td>\n",
+       "      <td>When an army recruit is found dead, his fellow...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>s4</td>\n",
+       "      <td>Movie</td>\n",
+       "      <td>9</td>\n",
+       "      <td>Shane Acker</td>\n",
+       "      <td>Elijah Wood, John C. Reilly, Jennifer Connelly...</td>\n",
+       "      <td>United States</td>\n",
+       "      <td>November 16, 2017</td>\n",
+       "      <td>2009</td>\n",
+       "      <td>PG-13</td>\n",
+       "      <td>80 min</td>\n",
+       "      <td>Action &amp; Adventure, Independent Movies, Sci-Fi...</td>\n",
+       "      <td>In a postapocalyptic world, rag-doll robots hi...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>s5</td>\n",
+       "      <td>Movie</td>\n",
+       "      <td>21</td>\n",
+       "      <td>Robert Luketic</td>\n",
+       "      <td>Jim Sturgess, Kevin Spacey, Kate Bosworth, Aar...</td>\n",
+       "      <td>United States</td>\n",
+       "      <td>January 1, 2020</td>\n",
+       "      <td>2008</td>\n",
+       "      <td>PG-13</td>\n",
+       "      <td>123 min</td>\n",
+       "      <td>Dramas</td>\n",
+       "      <td>A brilliant group of students become card-coun...</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "  show_id     type  title           director  \\\n",
+       "0      s1  TV Show     3%                NaN   \n",
+       "1      s2    Movie   7:19  Jorge Michel Grau   \n",
+       "2      s3    Movie  23:59       Gilbert Chan   \n",
+       "3      s4    Movie      9        Shane Acker   \n",
+       "4      s5    Movie     21     Robert Luketic   \n",
+       "\n",
+       "                                                cast        country  \\\n",
+       "0  João Miguel, Bianca Comparato, Michel Gomes, R...         Brazil   \n",
+       "1  Demián Bichir, Héctor Bonilla, Oscar Serrano, ...         Mexico   \n",
+       "2  Tedd Chan, Stella Chung, Henley Hii, Lawrence ...      Singapore   \n",
+       "3  Elijah Wood, John C. Reilly, Jennifer Connelly...  United States   \n",
+       "4  Jim Sturgess, Kevin Spacey, Kate Bosworth, Aar...  United States   \n",
+       "\n",
+       "          date_added  release_year rating   duration  \\\n",
+       "0    August 14, 2020          2020  TV-MA  4 Seasons   \n",
+       "1  December 23, 2016          2016  TV-MA     93 min   \n",
+       "2  December 20, 2018          2011      R     78 min   \n",
+       "3  November 16, 2017          2009  PG-13     80 min   \n",
+       "4    January 1, 2020          2008  PG-13    123 min   \n",
+       "\n",
+       "                                           listed_in  \\\n",
+       "0  International TV Shows, TV Dramas, TV Sci-Fi &...   \n",
+       "1                       Dramas, International Movies   \n",
+       "2                Horror Movies, International Movies   \n",
+       "3  Action & Adventure, Independent Movies, Sci-Fi...   \n",
+       "4                                             Dramas   \n",
+       "\n",
+       "                                         description  \n",
+       "0  In a future where the elite inhabit an island ...  \n",
+       "1  After a devastating earthquake hits Mexico Cit...  \n",
+       "2  When an army recruit is found dead, his fellow...  \n",
+       "3  In a postapocalyptic world, rag-doll robots hi...  \n",
+       "4  A brilliant group of students become card-coun...  "
+      ]
+     },
+     "execution_count": 111,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "dataset.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 112,
+   "id": "f02a9336",
+   "metadata": {
+    "scrolled": true
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "director 0.3068  % missing values\n",
+      "cast 0.0922  % missing values\n",
+      "country 0.0651  % missing values\n",
+      "date_added 0.0013  % missing values\n",
+      "rating 0.0009  % missing values\n"
+     ]
+    }
+   ],
+   "source": [
+    "#missing values \n",
+    "dataset_with_na = [features for features in dataset.columns if dataset[features].isnull().sum()>1]\n",
+    "for feature in dataset_with_na:\n",
+    "    print(feature, np.round(dataset[feature].isnull().mean(), 4),  ' % missing values')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 113,
+   "id": "15067194",
+   "metadata": {
+    "scrolled": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>show_id</th>\n",
+       "      <th>type</th>\n",
+       "      <th>title</th>\n",
+       "      <th>director</th>\n",
+       "      <th>cast</th>\n",
+       "      <th>country</th>\n",
+       "      <th>date_added</th>\n",
+       "      <th>release_year</th>\n",
+       "      <th>rating</th>\n",
+       "      <th>duration</th>\n",
+       "      <th>listed_in</th>\n",
+       "      <th>description</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>s1</td>\n",
+       "      <td>TV Show</td>\n",
+       "      <td>3%</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>João Miguel, Bianca Comparato, Michel Gomes, R...</td>\n",
+       "      <td>Brazil</td>\n",
+       "      <td>August 14, 2020</td>\n",
+       "      <td>2020</td>\n",
+       "      <td>TV-MA</td>\n",
+       "      <td>4 Seasons</td>\n",
+       "      <td>International TV Shows, TV Dramas, TV Sci-Fi &amp;...</td>\n",
+       "      <td>In a future where the elite inhabit an island ...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>s2</td>\n",
+       "      <td>Movie</td>\n",
+       "      <td>7:19</td>\n",
+       "      <td>Jorge Michel Grau</td>\n",
+       "      <td>Demián Bichir, Héctor Bonilla, Oscar Serrano, ...</td>\n",
+       "      <td>Mexico</td>\n",
+       "      <td>December 23, 2016</td>\n",
+       "      <td>2016</td>\n",
+       "      <td>TV-MA</td>\n",
+       "      <td>93 min</td>\n",
+       "      <td>Dramas, International Movies</td>\n",
+       "      <td>After a devastating earthquake hits Mexico Cit...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>s3</td>\n",
+       "      <td>Movie</td>\n",
+       "      <td>23:59</td>\n",
+       "      <td>Gilbert Chan</td>\n",
+       "      <td>Tedd Chan, Stella Chung, Henley Hii, Lawrence ...</td>\n",
+       "      <td>Singapore</td>\n",
+       "      <td>December 20, 2018</td>\n",
+       "      <td>2011</td>\n",
+       "      <td>R</td>\n",
+       "      <td>78 min</td>\n",
+       "      <td>Horror Movies, International Movies</td>\n",
+       "      <td>When an army recruit is found dead, his fellow...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>s4</td>\n",
+       "      <td>Movie</td>\n",
+       "      <td>9</td>\n",
+       "      <td>Shane Acker</td>\n",
+       "      <td>Elijah Wood, John C. Reilly, Jennifer Connelly...</td>\n",
+       "      <td>United States</td>\n",
+       "      <td>November 16, 2017</td>\n",
+       "      <td>2009</td>\n",
+       "      <td>PG-13</td>\n",
+       "      <td>80 min</td>\n",
+       "      <td>Action &amp; Adventure, Independent Movies, Sci-Fi...</td>\n",
+       "      <td>In a postapocalyptic world, rag-doll robots hi...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>s5</td>\n",
+       "      <td>Movie</td>\n",
+       "      <td>21</td>\n",
+       "      <td>Robert Luketic</td>\n",
+       "      <td>Jim Sturgess, Kevin Spacey, Kate Bosworth, Aar...</td>\n",
+       "      <td>United States</td>\n",
+       "      <td>January 1, 2020</td>\n",
+       "      <td>2008</td>\n",
+       "      <td>PG-13</td>\n",
+       "      <td>123 min</td>\n",
+       "      <td>Dramas</td>\n",
+       "      <td>A brilliant group of students become card-coun...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>...</th>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>7782</th>\n",
+       "      <td>s7783</td>\n",
+       "      <td>Movie</td>\n",
+       "      <td>Zozo</td>\n",
+       "      <td>Josef Fares</td>\n",
+       "      <td>Imad Creidi, Antoinette Turk, Elias Gergi, Car...</td>\n",
+       "      <td>Sweden, Czech Republic, United Kingdom, Denmar...</td>\n",
+       "      <td>October 19, 2020</td>\n",
+       "      <td>2005</td>\n",
+       "      <td>TV-MA</td>\n",
+       "      <td>99 min</td>\n",
+       "      <td>Dramas, International Movies</td>\n",
+       "      <td>When Lebanon's Civil War deprives Zozo of his ...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>7783</th>\n",
+       "      <td>s7784</td>\n",
+       "      <td>Movie</td>\n",
+       "      <td>Zubaan</td>\n",
+       "      <td>Mozez Singh</td>\n",
+       "      <td>Vicky Kaushal, Sarah-Jane Dias, Raaghav Chanan...</td>\n",
+       "      <td>India</td>\n",
+       "      <td>March 2, 2019</td>\n",
+       "      <td>2015</td>\n",
+       "      <td>TV-14</td>\n",
+       "      <td>111 min</td>\n",
+       "      <td>Dramas, International Movies, Music &amp; Musicals</td>\n",
+       "      <td>A scrappy but poor boy worms his way into a ty...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>7784</th>\n",
+       "      <td>s7785</td>\n",
+       "      <td>Movie</td>\n",
+       "      <td>Zulu Man in Japan</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>Nasty C</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>September 25, 2020</td>\n",
+       "      <td>2019</td>\n",
+       "      <td>TV-MA</td>\n",
+       "      <td>44 min</td>\n",
+       "      <td>Documentaries, International Movies, Music &amp; M...</td>\n",
+       "      <td>In this documentary, South African rapper Nast...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>7785</th>\n",
+       "      <td>s7786</td>\n",
+       "      <td>TV Show</td>\n",
+       "      <td>Zumbo's Just Desserts</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>Adriano Zumbo, Rachel Khoo</td>\n",
+       "      <td>Australia</td>\n",
+       "      <td>October 31, 2020</td>\n",
+       "      <td>2019</td>\n",
+       "      <td>TV-PG</td>\n",
+       "      <td>1 Season</td>\n",
+       "      <td>International TV Shows, Reality TV</td>\n",
+       "      <td>Dessert wizard Adriano Zumbo looks for the nex...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>7786</th>\n",
+       "      <td>s7787</td>\n",
+       "      <td>Movie</td>\n",
+       "      <td>ZZ TOP: THAT LITTLE OL' BAND FROM TEXAS</td>\n",
+       "      <td>Sam Dunn</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>United Kingdom, Canada, United States</td>\n",
+       "      <td>March 1, 2020</td>\n",
+       "      <td>2019</td>\n",
+       "      <td>TV-MA</td>\n",
+       "      <td>90 min</td>\n",
+       "      <td>Documentaries, Music &amp; Musicals</td>\n",
+       "      <td>This documentary delves into the mystique behi...</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "<p>7787 rows × 12 columns</p>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "     show_id     type                                    title  \\\n",
+       "0         s1  TV Show                                       3%   \n",
+       "1         s2    Movie                                     7:19   \n",
+       "2         s3    Movie                                    23:59   \n",
+       "3         s4    Movie                                        9   \n",
+       "4         s5    Movie                                       21   \n",
+       "...      ...      ...                                      ...   \n",
+       "7782   s7783    Movie                                     Zozo   \n",
+       "7783   s7784    Movie                                   Zubaan   \n",
+       "7784   s7785    Movie                        Zulu Man in Japan   \n",
+       "7785   s7786  TV Show                    Zumbo's Just Desserts   \n",
+       "7786   s7787    Movie  ZZ TOP: THAT LITTLE OL' BAND FROM TEXAS   \n",
+       "\n",
+       "               director                                               cast  \\\n",
+       "0                   NaN  João Miguel, Bianca Comparato, Michel Gomes, R...   \n",
+       "1     Jorge Michel Grau  Demián Bichir, Héctor Bonilla, Oscar Serrano, ...   \n",
+       "2          Gilbert Chan  Tedd Chan, Stella Chung, Henley Hii, Lawrence ...   \n",
+       "3           Shane Acker  Elijah Wood, John C. Reilly, Jennifer Connelly...   \n",
+       "4        Robert Luketic  Jim Sturgess, Kevin Spacey, Kate Bosworth, Aar...   \n",
+       "...                 ...                                                ...   \n",
+       "7782        Josef Fares  Imad Creidi, Antoinette Turk, Elias Gergi, Car...   \n",
+       "7783        Mozez Singh  Vicky Kaushal, Sarah-Jane Dias, Raaghav Chanan...   \n",
+       "7784                NaN                                            Nasty C   \n",
+       "7785                NaN                         Adriano Zumbo, Rachel Khoo   \n",
+       "7786           Sam Dunn                                                NaN   \n",
+       "\n",
+       "                                                country          date_added  \\\n",
+       "0                                                Brazil     August 14, 2020   \n",
+       "1                                                Mexico   December 23, 2016   \n",
+       "2                                             Singapore   December 20, 2018   \n",
+       "3                                         United States   November 16, 2017   \n",
+       "4                                         United States     January 1, 2020   \n",
+       "...                                                 ...                 ...   \n",
+       "7782  Sweden, Czech Republic, United Kingdom, Denmar...    October 19, 2020   \n",
+       "7783                                              India       March 2, 2019   \n",
+       "7784                                                NaN  September 25, 2020   \n",
+       "7785                                          Australia    October 31, 2020   \n",
+       "7786              United Kingdom, Canada, United States       March 1, 2020   \n",
+       "\n",
+       "      release_year rating   duration  \\\n",
+       "0             2020  TV-MA  4 Seasons   \n",
+       "1             2016  TV-MA     93 min   \n",
+       "2             2011      R     78 min   \n",
+       "3             2009  PG-13     80 min   \n",
+       "4             2008  PG-13    123 min   \n",
+       "...            ...    ...        ...   \n",
+       "7782          2005  TV-MA     99 min   \n",
+       "7783          2015  TV-14    111 min   \n",
+       "7784          2019  TV-MA     44 min   \n",
+       "7785          2019  TV-PG   1 Season   \n",
+       "7786          2019  TV-MA     90 min   \n",
+       "\n",
+       "                                              listed_in  \\\n",
+       "0     International TV Shows, TV Dramas, TV Sci-Fi &...   \n",
+       "1                          Dramas, International Movies   \n",
+       "2                   Horror Movies, International Movies   \n",
+       "3     Action & Adventure, Independent Movies, Sci-Fi...   \n",
+       "4                                                Dramas   \n",
+       "...                                                 ...   \n",
+       "7782                       Dramas, International Movies   \n",
+       "7783     Dramas, International Movies, Music & Musicals   \n",
+       "7784  Documentaries, International Movies, Music & M...   \n",
+       "7785                 International TV Shows, Reality TV   \n",
+       "7786                    Documentaries, Music & Musicals   \n",
+       "\n",
+       "                                            description  \n",
+       "0     In a future where the elite inhabit an island ...  \n",
+       "1     After a devastating earthquake hits Mexico Cit...  \n",
+       "2     When an army recruit is found dead, his fellow...  \n",
+       "3     In a postapocalyptic world, rag-doll robots hi...  \n",
+       "4     A brilliant group of students become card-coun...  \n",
+       "...                                                 ...  \n",
+       "7782  When Lebanon's Civil War deprives Zozo of his ...  \n",
+       "7783  A scrappy but poor boy worms his way into a ty...  \n",
+       "7784  In this documentary, South African rapper Nast...  \n",
+       "7785  Dessert wizard Adriano Zumbo looks for the nex...  \n",
+       "7786  This documentary delves into the mystique behi...  \n",
+       "\n",
+       "[7787 rows x 12 columns]"
+      ]
+     },
+     "execution_count": 113,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "dataset_modified = dataset.copy()\n",
+    "dataset_modified"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 114,
+   "id": "5ced98ec",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#missing values \n",
+    "dataset_modified = dataset_modified.replace(np.nan, 0)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 115,
+   "id": "411331b0",
+   "metadata": {
+    "scrolled": true
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array(['TV Show', 'Movie'], dtype=object)"
+      ]
+     },
+     "execution_count": 115,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#unique value in column \"type\"\n",
+    "dataset_modified['type'].unique()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 116,
+   "id": "27f309d9",
+   "metadata": {
+    "scrolled": true
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0    TV Show\n",
+       "1      Movie\n",
+       "Name: type, dtype: object"
+      ]
+     },
+     "execution_count": 116,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#count unique value in column \"type\"\n",
+    "dataset_modified.type.drop_duplicates()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 117,
+   "id": "05dddf96",
+   "metadata": {
+    "scrolled": true
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "Movie      5377\n",
+       "TV Show    2410\n",
+       "Name: type, dtype: int64"
+      ]
+     },
+     "execution_count": 117,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#count distinct and group by \"type\"\n",
+    "dataset_modified.type.value_counts()\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 118,
+   "id": "2f5b82e0",
+   "metadata": {
+    "scrolled": true
+   },
+   "outputs": [],
+   "source": [
+    "import matplotlib.pyplot as plt\n",
+    "import numpy as np\n",
+    "from matplotlib import colors\n",
+    "from matplotlib.ticker import PercentFormatter\n",
+    "import seaborn as sns  "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 119,
+   "id": "115a7df8",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "image/png": "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\n",
+      "text/plain": [
+       "<Figure size 432x288 with 1 Axes>"
+      ]
+     },
+     "metadata": {
+      "needs_background": "light"
+     },
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    " \n",
+    "# create a dataset\n",
+    "shows = ['movies', 'tv_shows']\n",
+    "counts = [5377, 2410]\n",
+    "x_pos = np.arange(len(shows))\n",
+    "\n",
+    "# Create bars\n",
+    "plt.bar(x_pos, counts, color=(0.2, 0.4, 0.6, 0.6))\n",
+    "\n",
+    "# Create names on the x-axis\n",
+    "plt.xticks(x_pos, shows)\n",
+    "\n",
+    "# Show graph\n",
+    "plt.show()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 120,
+   "id": "a28c42f5",
+   "metadata": {
+    "scrolled": true
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "United States                                                   2555\n",
+       "India                                                            923\n",
+       "0                                                                507\n",
+       "United Kingdom                                                   397\n",
+       "Japan                                                            226\n",
+       "                                                                ... \n",
+       "Russia, United States, China                                       1\n",
+       "Italy, Switzerland, France, Germany                                1\n",
+       "United States, United Kingdom, Canada                              1\n",
+       "United States, United Kingdom, Japan                               1\n",
+       "Sweden, Czech Republic, United Kingdom, Denmark, Netherlands       1\n",
+       "Name: country, Length: 682, dtype: int64"
+      ]
+     },
+     "execution_count": 120,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#count country \n",
+    "dataset_modified.country.value_counts()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 121,
+   "id": "b9e126c2",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "image/png": "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\n",
+      "text/plain": [
+       "<Figure size 432x288 with 1 Axes>"
+      ]
+     },
+     "metadata": {
+      "needs_background": "light"
+     },
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "#plot the most 5 countries of movies originated \n",
+    " \n",
+    "# create a dataset\n",
+    "country = ['United States', 'India', 'United Kingdom', 'Japan', 'South Korea']\n",
+    "counts_country = [2555, 923, 397, 226, 183]\n",
+    "x_pos = np.arange(len(country))\n",
+    "\n",
+    "# Create bars\n",
+    "plt.bar(x_pos, counts_country, color=(0.2, 0.4, 0.6, 0.6))\n",
+    "\n",
+    "# Create names on the x-axis\n",
+    "plt.xticks(x_pos, country)\n",
+    "\n",
+    "# Show graph\n",
+    "plt.show()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 122,
+   "id": "f2a2f105",
+   "metadata": {
+    "scrolled": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "2018    1121\n",
+       "2017    1012\n",
+       "2019     996\n",
+       "2016     882\n",
+       "2020     868\n",
+       "        ... \n",
+       "1925       1\n",
+       "1964       1\n",
+       "1966       1\n",
+       "1947       1\n",
+       "1959       1\n",
+       "Name: release_year, Length: 73, dtype: int64"
+      ]
+     },
+     "execution_count": 122,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#count release year \n",
+    "dataset_modified.release_year.value_counts()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 123,
+   "id": "8f3f526e",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "image/png": "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\n",
+      "text/plain": [
+       "<Figure size 432x288 with 1 Axes>"
+      ]
+     },
+     "metadata": {
+      "needs_background": "light"
+     },
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "#plot the most 5 released years \n",
+    " \n",
+    "# create a dataset\n",
+    "years = [2016, 2017, 2018, 2019, 2020]\n",
+    "counts_years = [882, 1012, 1121, 996, 868]\n",
+    "x_pos = np.arange(len(years))\n",
+    "\n",
+    "# Create bars\n",
+    "plt.bar(x_pos, counts_years, color=(0.2, 0.4, 0.6, 0.6))\n",
+    "\n",
+    "# Create names on the x-axis\n",
+    "plt.xticks(x_pos, years)\n",
+    "\n",
+    "# Show graph\n",
+    "plt.show()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 124,
+   "id": "0b9e0abb",
+   "metadata": {
+    "scrolled": true
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "TV-MA       2863\n",
+       "TV-14       1931\n",
+       "TV-PG        806\n",
+       "R            665\n",
+       "PG-13        386\n",
+       "TV-Y         280\n",
+       "TV-Y7        271\n",
+       "PG           247\n",
+       "TV-G         194\n",
+       "NR            84\n",
+       "G             39\n",
+       "0              7\n",
+       "TV-Y7-FV       6\n",
+       "UR             5\n",
+       "NC-17          3\n",
+       "Name: rating, dtype: int64"
+      ]
+     },
+     "execution_count": 124,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#count rating\n",
+    "dataset_modified.rating.value_counts()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 125,
+   "id": "05716731",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "image/png": "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\n",
+      "text/plain": [
+       "<Figure size 432x288 with 1 Axes>"
+      ]
+     },
+     "metadata": {
+      "needs_background": "light"
+     },
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "#plot the most 5 rating of movies \n",
+    "\n",
+    "# create a dataset\n",
+    "rating = ['TV-MA', 'TV-14', 'TV-PG', 'R', 'PG-13']\n",
+    "counts_rating = [2864, 1931, 806, 665, 386]\n",
+    "x_pos = np.arange(len(rating))\n",
+    "\n",
+    "# Create bars\n",
+    "plt.bar(x_pos, counts_rating, color=(0.2, 0.4, 0.6, 0.6))\n",
+    "\n",
+    "# Create names on the x-axis\n",
+    "plt.xticks(x_pos, rating)\n",
+    "\n",
+    "# Show graph\n",
+    "plt.show()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 126,
+   "id": "643886d5",
+   "metadata": {
+    "scrolled": true
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "1 Season     1608\n",
+       "2 Seasons     382\n",
+       "3 Seasons     184\n",
+       "90 min        136\n",
+       "93 min        131\n",
+       "             ... \n",
+       "182 min         1\n",
+       "224 min         1\n",
+       "233 min         1\n",
+       "196 min         1\n",
+       "191 min         1\n",
+       "Name: duration, Length: 216, dtype: int64"
+      ]
+     },
+     "execution_count": 126,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#count duration \n",
+    "dataset_modified.duration.value_counts()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 127,
+   "id": "761caa8d",
+   "metadata": {
+    "scrolled": true
+   },
+   "outputs": [
+    {
+     "data": {
+      "image/png": "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\n",
+      "text/plain": [
+       "<Figure size 432x288 with 1 Axes>"
+      ]
+     },
+     "metadata": {
+      "needs_background": "light"
+     },
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "# create a dataset\n",
+    "duration = ['1 Season', '2 Seasons', '3 Seasons', '90 min', '93 min']\n",
+    "counts_duration = [2864, 1931, 806, 665, 386]\n",
+    "x_pos = np.arange(len(duration))\n",
+    "\n",
+    "# Create bars\n",
+    "plt.bar(x_pos, counts_duration, color=(0.2, 0.4, 0.6, 0.6))\n",
+    "\n",
+    "# Create names on the x-axis\n",
+    "plt.xticks(x_pos, duration)\n",
+    "\n",
+    "# Show graph\n",
+    "plt.show()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 128,
+   "id": "485c2662",
+   "metadata": {
+    "scrolled": true
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>show_id</th>\n",
+       "      <th>type</th>\n",
+       "      <th>title</th>\n",
+       "      <th>director</th>\n",
+       "      <th>cast</th>\n",
+       "      <th>country</th>\n",
+       "      <th>date_added</th>\n",
+       "      <th>release_year</th>\n",
+       "      <th>rating</th>\n",
+       "      <th>duration</th>\n",
+       "      <th>listed_in</th>\n",
+       "      <th>description</th>\n",
+       "      <th>Month</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>s1</td>\n",
+       "      <td>TV Show</td>\n",
+       "      <td>3%</td>\n",
+       "      <td>0</td>\n",
+       "      <td>João Miguel, Bianca Comparato, Michel Gomes, R...</td>\n",
+       "      <td>Brazil</td>\n",
+       "      <td>August 14, 2020</td>\n",
+       "      <td>2020</td>\n",
+       "      <td>TV-MA</td>\n",
+       "      <td>4 Seasons</td>\n",
+       "      <td>International TV Shows, TV Dramas, TV Sci-Fi &amp;...</td>\n",
+       "      <td>In a future where the elite inhabit an island ...</td>\n",
+       "      <td>8</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>s2</td>\n",
+       "      <td>Movie</td>\n",
+       "      <td>7:19</td>\n",
+       "      <td>Jorge Michel Grau</td>\n",
+       "      <td>Demián Bichir, Héctor Bonilla, Oscar Serrano, ...</td>\n",
+       "      <td>Mexico</td>\n",
+       "      <td>December 23, 2016</td>\n",
+       "      <td>2016</td>\n",
+       "      <td>TV-MA</td>\n",
+       "      <td>93 min</td>\n",
+       "      <td>Dramas, International Movies</td>\n",
+       "      <td>After a devastating earthquake hits Mexico Cit...</td>\n",
+       "      <td>12</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>s3</td>\n",
+       "      <td>Movie</td>\n",
+       "      <td>23:59</td>\n",
+       "      <td>Gilbert Chan</td>\n",
+       "      <td>Tedd Chan, Stella Chung, Henley Hii, Lawrence ...</td>\n",
+       "      <td>Singapore</td>\n",
+       "      <td>December 20, 2018</td>\n",
+       "      <td>2011</td>\n",
+       "      <td>R</td>\n",
+       "      <td>78 min</td>\n",
+       "      <td>Horror Movies, International Movies</td>\n",
+       "      <td>When an army recruit is found dead, his fellow...</td>\n",
+       "      <td>12</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>s4</td>\n",
+       "      <td>Movie</td>\n",
+       "      <td>9</td>\n",
+       "      <td>Shane Acker</td>\n",
+       "      <td>Elijah Wood, John C. Reilly, Jennifer Connelly...</td>\n",
+       "      <td>United States</td>\n",
+       "      <td>November 16, 2017</td>\n",
+       "      <td>2009</td>\n",
+       "      <td>PG-13</td>\n",
+       "      <td>80 min</td>\n",
+       "      <td>Action &amp; Adventure, Independent Movies, Sci-Fi...</td>\n",
+       "      <td>In a postapocalyptic world, rag-doll robots hi...</td>\n",
+       "      <td>11</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>s5</td>\n",
+       "      <td>Movie</td>\n",
+       "      <td>21</td>\n",
+       "      <td>Robert Luketic</td>\n",
+       "      <td>Jim Sturgess, Kevin Spacey, Kate Bosworth, Aar...</td>\n",
+       "      <td>United States</td>\n",
+       "      <td>January 1, 2020</td>\n",
+       "      <td>2008</td>\n",
+       "      <td>PG-13</td>\n",
+       "      <td>123 min</td>\n",
+       "      <td>Dramas</td>\n",
+       "      <td>A brilliant group of students become card-coun...</td>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "  show_id     type  title           director  \\\n",
+       "0      s1  TV Show     3%                  0   \n",
+       "1      s2    Movie   7:19  Jorge Michel Grau   \n",
+       "2      s3    Movie  23:59       Gilbert Chan   \n",
+       "3      s4    Movie      9        Shane Acker   \n",
+       "4      s5    Movie     21     Robert Luketic   \n",
+       "\n",
+       "                                                cast        country  \\\n",
+       "0  João Miguel, Bianca Comparato, Michel Gomes, R...         Brazil   \n",
+       "1  Demián Bichir, Héctor Bonilla, Oscar Serrano, ...         Mexico   \n",
+       "2  Tedd Chan, Stella Chung, Henley Hii, Lawrence ...      Singapore   \n",
+       "3  Elijah Wood, John C. Reilly, Jennifer Connelly...  United States   \n",
+       "4  Jim Sturgess, Kevin Spacey, Kate Bosworth, Aar...  United States   \n",
+       "\n",
+       "          date_added  release_year rating   duration  \\\n",
+       "0    August 14, 2020          2020  TV-MA  4 Seasons   \n",
+       "1  December 23, 2016          2016  TV-MA     93 min   \n",
+       "2  December 20, 2018          2011      R     78 min   \n",
+       "3  November 16, 2017          2009  PG-13     80 min   \n",
+       "4    January 1, 2020          2008  PG-13    123 min   \n",
+       "\n",
+       "                                           listed_in  \\\n",
+       "0  International TV Shows, TV Dramas, TV Sci-Fi &...   \n",
+       "1                       Dramas, International Movies   \n",
+       "2                Horror Movies, International Movies   \n",
+       "3  Action & Adventure, Independent Movies, Sci-Fi...   \n",
+       "4                                             Dramas   \n",
+       "\n",
+       "                                         description  Month  \n",
+       "0  In a future where the elite inhabit an island ...      8  \n",
+       "1  After a devastating earthquake hits Mexico Cit...     12  \n",
+       "2  When an army recruit is found dead, his fellow...     12  \n",
+       "3  In a postapocalyptic world, rag-doll robots hi...     11  \n",
+       "4  A brilliant group of students become card-coun...      1  "
+      ]
+     },
+     "execution_count": 128,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#extracting month from date and added \"month\" column \n",
+    "\n",
+    "import datetime \n",
+    "dataset_modified['Month'] = pd.DatetimeIndex(dataset_modified['date_added']).month\n",
+    "dataset_modified.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 129,
+   "id": "51de5625",
+   "metadata": {
+    "scrolled": true
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "12    833\n",
+       "10    785\n",
+       "1     767\n",
+       "11    738\n",
+       "3     669\n",
+       "9     619\n",
+       "8     618\n",
+       "4     601\n",
+       "7     600\n",
+       "5     543\n",
+       "6     542\n",
+       "2     472\n",
+       "Name: Month, dtype: int64"
+      ]
+     },
+     "execution_count": 129,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#count month \n",
+    "dataset_modified.Month.value_counts()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 130,
+   "id": "cac3f917",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "image/png": "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\n",
+      "text/plain": [
+       "<Figure size 432x288 with 1 Axes>"
+      ]
+     },
+     "metadata": {
+      "needs_background": "light"
+     },
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "#plot month \n",
+    "months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'July', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec']\n",
+    "counts_month = [757, 472, 669, 601, 543, 542, 600, 618, 619, 785, 738, 833]\n",
+    "x_pos = np.arange(len(months))\n",
+    "\n",
+    "# Create bars\n",
+    "plt.bar(x_pos, counts_month, color=(0.2, 0.4, 0.6, 0.6))\n",
+    "\n",
+    "# Create names on the x-axis\n",
+    "plt.xticks(x_pos, months)\n",
+    "\n",
+    "# Show graph\n",
+    "plt.show()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 131,
+   "id": "e28fd248",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "TV                  4726\n",
+       "International       3636\n",
+       "Movies              3012\n",
+       "&                   2239\n",
+       "Shows,              2087\n",
+       "Dramas,             1996\n",
+       "Movies,             1977\n",
+       "Comedies,           1275\n",
+       "Action               871\n",
+       "Romantic             864\n",
+       "Dramas               814\n",
+       "Adventure,           730\n",
+       "Comedies             721\n",
+       "Independent          673\n",
+       "Thrillers            541\n",
+       "Children             532\n",
+       "Family               532\n",
+       "Shows                525\n",
+       "Documentaries,       431\n",
+       "Crime                427\n",
+       "Kids'                414\n",
+       "Stand-Up             381\n",
+       "Comedy               381\n",
+       "Documentaries        355\n",
+       "Horror               345\n",
+       "Music                321\n",
+       "Musicals             295\n",
+       "Sci-Fi               294\n",
+       "Fantasy              255\n",
+       "TV,                  246\n",
+       "British              232\n",
+       "Reality              222\n",
+       "Anime                205\n",
+       "Docuseries,          204\n",
+       "Sports               196\n",
+       "Korean               150\n",
+       "Docuseries           149\n",
+       "Spanish-Language     147\n",
+       "Adventure            141\n",
+       "Series,              140\n",
+       "Classic              130\n",
+       "LGBTQ                 90\n",
+       "Cult                  86\n",
+       "Nature                85\n",
+       "Science               85\n",
+       "Mysteries             70\n",
+       "Teen                  60\n",
+       "Faith                 57\n",
+       "Features,             55\n",
+       "Talk                  52\n",
+       "Fantasy,              39\n",
+       "Horror,               36\n",
+       "Spirituality          35\n",
+       "Musicals,             26\n",
+       "Spirituality,         22\n",
+       "Mysteries,            20\n",
+       "Series                 8\n",
+       "Features               2\n",
+       "dtype: int64"
+      ]
+     },
+     "execution_count": 131,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    " pd.Series(' '.join(dataset_modified.loc[:,'listed_in']).split()).value_counts()\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 132,
+   "id": "b7ce8927",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0       International TV Shows, TV Dramas, TV Sci-Fi &...\n",
+       "1                            Dramas, International Movies\n",
+       "2                     Horror Movies, International Movies\n",
+       "3       Action & Adventure, Independent Movies, Sci-Fi...\n",
+       "4                                                  Dramas\n",
+       "                              ...                        \n",
+       "7782                         Dramas, International Movies\n",
+       "7783       Dramas, International Movies, Music & Musicals\n",
+       "7784    Documentaries, International Movies, Music & M...\n",
+       "7785                   International TV Shows, Reality TV\n",
+       "7786                      Documentaries, Music & Musicals\n",
+       "Name: listed_in, Length: 7787, dtype: object"
+      ]
+     },
+     "execution_count": 132,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "dataset_modified.loc[:,'listed_in']"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 141,
+   "id": "610fbb00",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "12"
+      ]
+     },
+     "execution_count": 141,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#Action, Comedy, Drama, Fantasy,Horror,Mystery,Romance,Thriller,Western\n",
+    "dataset_modified.loc[dataset_modified.listed_in == 'TV Shows', 'listed_in'].count()\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 142,
+   "id": "9de65189",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "12"
+      ]
+     },
+     "execution_count": 142,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    " (dataset_modified.listed_in == 'TV Shows').sum()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "8d70bebd",
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "db57a628",
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "196b17ea",
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.9.6"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}
